@@ -1,4 +1,3 @@
-
 package com.indium.conference.service;
 
 import com.indium.conference.entity.*;
@@ -24,7 +23,7 @@ public class RoomService {
 
     // Fetch available rooms
     public List<RoomDetails> getAvailableRooms() {
-        return roomDetailsRepository.findByIsActiveAndBookingAllowed('y', 'y');
+        return roomDetailsRepository.findAvailableRooms();
     }
 
     // Book a room for a user
@@ -50,6 +49,21 @@ public class RoomService {
             log.setComments("User canceled the booking.");
             auditLogRepository.save(log);
             return "Booking cancelled successfully.";
+        }
+        return "Booking not found or user mismatch.";
+    }
+
+    // Edit a booking request by a user
+    public String editBooking(Integer bookingId, Bookings updatedBooking) {
+        Optional<Bookings> existingBooking = bookingsRepository.findById(bookingId);
+        if (existingBooking.isPresent() && existingBooking.get().getUserId().equals(updatedBooking.getUserId())) {
+            Bookings bookingToUpdate = existingBooking.get();
+            bookingToUpdate.setEventName(updatedBooking.getEventName());
+            bookingToUpdate.setStartTime(updatedBooking.getStartTime());
+            bookingToUpdate.setEndTime(updatedBooking.getEndTime());
+            bookingToUpdate.setEventDate(updatedBooking.getEventDate());
+            bookingsRepository.save(bookingToUpdate);
+            return "Booking updated successfully.";
         }
         return "Booking not found or user mismatch.";
     }

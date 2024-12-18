@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface RoomDetailsRepository extends JpaRepository<RoomDetails, Integer> {
     @Query("SELECT r FROM RoomDetails r WHERE r.isActive = 'y' AND r.bookingAllowed = 'y'")
-    List<RoomDetails> findByIsActiveAndBookingAllowed(char isActive, char bookingAllowed);
+    List<RoomDetails> findAvailableRooms();
 
     @Query("SELECT r FROM RoomDetails r WHERE r.locationId = :locationId AND r.isActive = 'y'")
     List<RoomDetails> findActiveRoomsByLocation(@Param("locationId") Integer locationId);
