@@ -1,14 +1,15 @@
 package com.indium.conference.entity;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "user_details")
-public class UserDetails {
+public class UserDetails implements Serializable {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", columnDefinition = "SMALLINT UNSIGNED")
-    private Integer userId;
+    @Column(name = "user_id", columnDefinition = "VARCHAR(6)")
+    private String userId;
 
     @Column(name = "email_id", columnDefinition = "VARCHAR(300)", nullable = false)
     private String emailId;
@@ -22,12 +23,15 @@ public class UserDetails {
     @Column(name = "preferred_location", columnDefinition = "VARCHAR(50)")
     private String preferredLocation;
 
+    @Column(name = "password", columnDefinition = "VARCHAR(255)", nullable = false)
+    private String password;
+
     // Getters and Setters
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -61,5 +65,13 @@ public class UserDetails {
 
     public void setPreferredLocation(String preferredLocation) {
         this.preferredLocation = preferredLocation;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

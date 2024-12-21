@@ -21,6 +21,9 @@ public class RoomService {
     @Autowired
     private AuditLogRepository auditLogRepository;
 
+    @Autowired
+    private LocationDetailsRepository locationDetailsRepository;
+
     // Fetch available rooms
     public List<RoomDetails> getAvailableRooms() {
         return roomDetailsRepository.findAvailableRooms();
@@ -34,7 +37,7 @@ public class RoomService {
     }
 
     // Cancel a room booking
-    public String cancelBooking(Integer bookingId, Integer userId) {
+    public String cancelBooking(Integer bookingId, String userId) {
         Optional<Bookings> booking = bookingsRepository.findById(bookingId);
         if (booking.isPresent() && booking.get().getUserId().equals(userId)) {
             Bookings updatedBooking = booking.get();
@@ -69,7 +72,7 @@ public class RoomService {
     }
 
     // Approve or reject a booking
-    public String approveOrRejectBooking(Integer bookingId, Integer adminId, Boolean approve, String remarks) {
+    public String approveOrRejectBooking(Integer bookingId, String adminId, Boolean approve, String remarks) {
         Optional<Bookings> booking = bookingsRepository.findById(bookingId);
         if (booking.isPresent()) {
             Bookings updatedBooking = booking.get();
@@ -90,11 +93,18 @@ public class RoomService {
         return "New room added successfully.";
     }
 
+    // Add a new location (Super Admin only)
+    public String addNewLocation(LocationDetails locationDetails) {
+        locationDetails.setIsActive('y');
+        locationDetailsRepository.save(locationDetails);
+        return "New location added successfully.";
+    }
+
     // Block a room for a specific time
     public String blockRoom(Integer roomId, String startTime, String endTime) {
         Optional<RoomDetails> room = roomDetailsRepository.findById(roomId);
         if (room.isPresent()) {
-            // Implement logic to block room
+            // Implement logic to block room (e.g., update availability in database)
             return "Room blocked from " + startTime + " to " + endTime;
         }
         return "Room not found.";

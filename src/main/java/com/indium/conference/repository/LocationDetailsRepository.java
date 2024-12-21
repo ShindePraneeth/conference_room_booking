@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-// Repository for LocationDetails
 @Repository
 public interface LocationDetailsRepository extends JpaRepository<LocationDetails, Integer> {
     @Query("SELECT l FROM LocationDetails l WHERE l.isActive = 'y'")

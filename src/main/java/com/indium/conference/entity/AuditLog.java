@@ -15,8 +15,8 @@ public class AuditLog {
     @Column(name = "booking_id", columnDefinition = "SMALLINT UNSIGNED", nullable = false)
     private Integer bookingId;
 
-    @Column(name = "created_by", columnDefinition = "SMALLINT UNSIGNED", nullable = true)
-    private Integer createdBy;
+    @Column(name = "created_by", columnDefinition = "VARCHAR(6)", nullable = true)
+    private String createdBy;
 
     @Column(name = "change_type", columnDefinition = "ENUM('modified', 'cancelled')", nullable = false)
     private String changeType;
@@ -44,11 +44,11 @@ public class AuditLog {
         this.bookingId = bookingId;
     }
 
-    public Integer getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Integer createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 

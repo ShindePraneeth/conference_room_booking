@@ -19,8 +19,8 @@ public class Bookings {
     @Column(name = "room_id", columnDefinition = "SMALLINT UNSIGNED", nullable = false)
     private Integer roomId;
 
-    @Column(name = "user_id", columnDefinition = "SMALLINT UNSIGNED", nullable = false)
-    private Integer userId;
+    @Column(name = "user_id", columnDefinition = "VARCHAR(6)", nullable = false)
+    private String userId;
 
     @Column(name = "booked_on", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     private LocalDateTime bookedOn;
@@ -40,8 +40,8 @@ public class Bookings {
     @Column(name = "status", columnDefinition = "ENUM('awaiting_approval', 'approved', 'cancelled', 'rejected')", nullable = false)
     private String status;
 
-    @Column(name = "approved_by", columnDefinition = "SMALLINT UNSIGNED", nullable = true)
-    private Integer approvedBy;
+    @Column(name = "approved_by", columnDefinition = "VARCHAR(6)", nullable = true)
+    private String approvedBy;
 
     @Column(name = "approved_on", columnDefinition = "DATETIME", nullable = true)
     private LocalDateTime approvedOn;
@@ -80,11 +80,11 @@ public class Bookings {
         this.roomId = roomId;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -136,11 +136,11 @@ public class Bookings {
         this.status = status;
     }
 
-    public Integer getApprovedBy() {
+    public String getApprovedBy() {
         return approvedBy;
     }
 
-    public void setApprovedBy(Integer approvedBy) {
+    public void setApprovedBy(String approvedBy) {
         this.approvedBy = approvedBy;
     }
 

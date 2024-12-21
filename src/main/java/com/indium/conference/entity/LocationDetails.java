@@ -17,8 +17,8 @@ public class LocationDetails {
     @Column(name = "is_active", columnDefinition = "CHAR(1)", nullable = false)
     private char isActive;
 
-    @Column(name = "created_by", columnDefinition = "SMALLINT UNSIGNED")
-    private Integer createdBy;
+    @Column(name = "created_by", columnDefinition = "VARCHAR(6)")
+    private String createdBy;
 
     @Column(name = "created_on", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime createdOn;
@@ -60,11 +60,11 @@ public class LocationDetails {
         this.isActive = isActive;
     }
 
-    public Integer getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Integer createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 

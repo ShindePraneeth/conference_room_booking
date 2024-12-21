@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "recurrence_mapping")
 public class RecurrenceMapping {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recurrence_id", columnDefinition = "SMALLINT UNSIGNED")

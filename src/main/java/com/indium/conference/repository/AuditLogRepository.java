@@ -13,4 +13,3 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Integer> {
     @Query("SELECT a FROM AuditLog a WHERE a.bookingId = :bookingId")
     List<AuditLog> findLogsByBookingId(@Param("bookingId") Integer bookingId);
 }
-

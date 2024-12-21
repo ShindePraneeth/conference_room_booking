@@ -8,10 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-// Repository for RecurrenceMapping
 @Repository
 public interface RecurrenceMappingRepository extends JpaRepository<RecurrenceMapping, Integer> {
     @Query("SELECT r FROM RecurrenceMapping r WHERE r.bookingId = :bookingId")
     List<RecurrenceMapping> findRecurrenceByBookingId(@Param("bookingId") Integer bookingId);
 }
-

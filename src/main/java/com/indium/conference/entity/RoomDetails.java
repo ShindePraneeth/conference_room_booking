@@ -39,8 +39,8 @@ public class RoomDetails {
     @Column(name = "recurrence_allowed", columnDefinition = "CHAR(1) DEFAULT 'y'", nullable = false)
     private char recurrenceAllowed;
 
-    @Column(name = "created_by", columnDefinition = "SMALLINT UNSIGNED", nullable = true)
-    private Integer createdBy;
+    @Column(name = "created_by", columnDefinition = "VARCHAR(6)", nullable = true)
+    private String createdBy;
 
     @Column(name = "created_on", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", nullable = false)
     private LocalDateTime createdOn;
@@ -126,11 +126,11 @@ public class RoomDetails {
         this.recurrenceAllowed = recurrenceAllowed;
     }
 
-    public Integer getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Integer createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 

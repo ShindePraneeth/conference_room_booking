@@ -9,11 +9,10 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
-// Repository for Bookings
 @Repository
 public interface BookingsRepository extends JpaRepository<Bookings, Integer> {
     @Query("SELECT b FROM Bookings b WHERE b.userId = :userId")
-    List<Bookings> findBookingsByUserId(@Param("userId") Integer userId);
+    List<Bookings> findBookingsByUserId(@Param("userId") String userId);
 
     @Query("SELECT b FROM Bookings b WHERE b.status = 'awaiting_approval'")
     List<Bookings> findPendingApprovalBookings();
@@ -21,4 +20,3 @@ public interface BookingsRepository extends JpaRepository<Bookings, Integer> {
     @Query("SELECT b FROM Bookings b WHERE b.eventDate BETWEEN :startDate AND :endDate")
     List<Bookings> findBookingsWithinDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }
-
