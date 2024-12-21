@@ -26,9 +26,15 @@ public class RoomService {
 
     // Fetch available rooms
     public List<RoomDetails> getAvailableRooms() {
+
         return roomDetailsRepository.findAvailableRooms();
     }
 
+    public String addLocation(LocationDetails locationDetails) {
+        locationDetails.setCreatedOn(LocalDateTime.now()); // Set the created timestamp
+        locationDetailsRepository.save(locationDetails);
+        return "Booking request submitted successfully.";
+    }
     // Book a room for a user
     public String bookRoom(Bookings booking) {
         booking.setStatus("awaiting_approval");
@@ -89,6 +95,7 @@ public class RoomService {
     // Add a new room
     public String addNewRoom(RoomDetails roomDetails) {
         roomDetails.setIsActive('y');
+        roomDetails.setCreatedOn(LocalDateTime.now());
         roomDetailsRepository.save(roomDetails);
         return "New room added successfully.";
     }

@@ -12,4 +12,6 @@ import java.util.List;
 public interface AuditLogRepository extends JpaRepository<AuditLog, Integer> {
     @Query("SELECT a FROM AuditLog a WHERE a.bookingId = :bookingId")
     List<AuditLog> findLogsByBookingId(@Param("bookingId") Integer bookingId);
+
+    List<AuditLog> findByBookingId(Integer bookingId);
 }

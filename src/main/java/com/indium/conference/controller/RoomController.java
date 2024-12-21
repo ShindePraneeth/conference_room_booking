@@ -16,6 +16,12 @@ public class RoomController {
     @Autowired
     private RoomService roomService;
 
+    @PostMapping("/locations")
+    public ResponseEntity<String> createLocation(@RequestBody LocationDetails locationDetails) {
+        String result = roomService.addLocation(locationDetails);
+        return ResponseEntity.ok(result);
+    }
+
     // View available rooms
     @GetMapping("/available")
     public ResponseEntity<List<RoomDetails>> viewAvailableRooms() {

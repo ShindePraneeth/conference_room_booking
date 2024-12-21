@@ -20,7 +20,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/auth/login", "/api/auth/validate").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/validate","/api/bookings/{bookingId}").permitAll()
 
                 .requestMatchers("/api/rooms/admin/**").hasAnyAuthority("admin", "superadmin")
                 .requestMatchers("/api/rooms/user/**").hasAuthority("user")
