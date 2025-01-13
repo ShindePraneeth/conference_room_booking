@@ -27,6 +27,9 @@ public class AuditLog {
     @Column(name = "comments", columnDefinition = "LONGTEXT", nullable = false)
     private String comments;
 
+    @Column(name = "booking_status", columnDefinition = "ENUM('awaiting_approval', 'approved', 'cancelled', 'rejected')", nullable = true)
+    private String bookingStatus;
+
     // Getters and Setters
     public Integer getAuditLogId() {
         return auditLogId;
@@ -74,5 +77,13 @@ public class AuditLog {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getBookingStatus() {
+        return bookingStatus;
+    }
+
+    public void setBookingStatus(String bookingStatus) {
+        this.bookingStatus = bookingStatus;
     }
 }

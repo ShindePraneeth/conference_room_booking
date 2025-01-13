@@ -1,12 +1,13 @@
 package com.indium.conference.controller;
 
 import com.indium.conference.entity.*;
+import com.indium.conference.repository.UserDetailsRepository;
 import com.indium.conference.service.RoomService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.indium.conference.exception.ResourceNotFoundException;
 import java.util.List;
 
 @RestController
@@ -15,6 +16,9 @@ public class RoomController {
 
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    UserDetailsRepository userDetailsRepository;
 
     @PostMapping("/locations")
     public ResponseEntity<String> createLocation(@RequestBody LocationDetails locationDetails) {
@@ -84,19 +88,39 @@ public class RoomController {
     }
 
     // Admin: Add a new room
+//    @PostMapping("/admin/addRoom")
+//    public ResponseEntity<String> addRoom(HttpServletRequest request, @RequestBody RoomDetails roomDetails) {
+//        String role = (String) request.getAttribute("role");
+//        String userId = (String) request.getAttribute("userId");
+//
+//        if (!role.equals("admin") && !role.equals("superadmin")) {
+//            return ResponseEntity.status(403).body("Access Denied: Only admins can add rooms.");
+//        }
+//
+//        roomDetails.setCreatedBy(userId);
+//        String result = roomService.addNewRoom(roomDetails);
+//        return ResponseEntity.ok(result);
+//    }
     @PostMapping("/admin/addRoom")
-    public ResponseEntity<String> addRoom(HttpServletRequest request, @RequestBody RoomDetails roomDetails) {
-        String role = (String) request.getAttribute("role");
-        String userId = (String) request.getAttribute("userId");
+    public ResponseEntity<String> addRoom(@RequestBody RoomDetails roomDetails, @RequestParam String userId) {
+        // Fetch user details from the userDetails table using the userId
+        UserDetails userDetails = userDetailsRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found for ID: " + userId));
 
-        if (!role.equals("admin") && !role.equals("superadmin")) {
+        // Check if the role is admin or superadmin
+        String role = userDetails.getRoleType();
+        if (!"admin".equalsIgnoreCase(role) && !"superadmin".equalsIgnoreCase(role)) {
             return ResponseEntity.status(403).body("Access Denied: Only admins can add rooms.");
         }
 
+        // Set the createdBy field in roomDetails
         roomDetails.setCreatedBy(userId);
+
+        // Call the service method to add the new room
         String result = roomService.addNewRoom(roomDetails);
         return ResponseEntity.ok(result);
     }
+
 
     // Add a new location (Super Admin only)
     @PostMapping("/admin/addLocation")

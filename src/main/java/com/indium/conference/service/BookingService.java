@@ -50,16 +50,13 @@ public class BookingService {
         // Record in audit log
         AuditLog auditLog = new AuditLog();
         auditLog.setBookingId(booking.getBookingId());
-        auditLog.setChangeType("modified");  // Change type as 'created' when a new booking is made
+        auditLog.setChangeType("modified");
         auditLog.setComments("Booking created.");
         auditLog.setTimestamp(LocalDateTime.now());
+        auditLog.setBookingStatus(booking.getStatus()); // Set the booking status
         auditLogRepository.save(auditLog);
     }
 
-    /**
-     * Edit booking details.
-     * This method updates an existing booking and logs the change in the audit log.
-     */
     public void editBooking(Integer bookingId, Bookings bookingRequest) {
         // Step 1: Find the existing booking
         Bookings booking = bookingRepository.findById(bookingId)
@@ -81,7 +78,7 @@ public class BookingService {
         booking.setEndTime(bookingRequest.getEndTime());
         booking.setEventName(bookingRequest.getEventName());
 
-        // Step 5: Save the updated booking (we are updating the same booking, not creating a new one)
+        // Step 5: Save the updated booking
         bookingRepository.save(booking);
 
         // Step 6: Record the change in the audit log
@@ -90,13 +87,10 @@ public class BookingService {
         auditLog.setChangeType("modified");
         auditLog.setComments("Booking modified. Old values - eventName: " + oldEventName + ", startTime: " + oldStartTime + ", endTime: " + oldEndTime);
         auditLog.setTimestamp(LocalDateTime.now());
+        auditLog.setBookingStatus(booking.getStatus()); // Set the updated booking status
         auditLogRepository.save(auditLog);
     }
 
-    /**
-     * Cancel a booking.
-     * This method updates the booking status to "cancelled" and logs the change in the audit log.
-     */
     public void cancelBooking(Integer bookingId) {
         Bookings booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
@@ -110,50 +104,61 @@ public class BookingService {
         auditLog.setChangeType("cancelled");
         auditLog.setComments("Booking cancelled.");
         auditLog.setTimestamp(LocalDateTime.now());
+        auditLog.setBookingStatus(booking.getStatus()); // Set the updated booking status
         auditLogRepository.save(auditLog);
     }
 
-    /**
-     * Approve a booking.
-     * This method approves the booking and records the approval in the booking and the audit log.
-     */
+    @Transactional
     public void approveBooking(Integer bookingId, String userId, Bookings updatedBooking) {
-        // Fetch the user details of the approver
-        UserDetails approver = userDetailsRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        try {
+            // Fetch the user details of the approver
+            UserDetails approver = userDetailsRepository.findById(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Check if the user has the admin role
-        if (!"admin".equalsIgnoreCase(approver.getRoleType())) {
-            throw new IllegalStateException("Only admin users can approve bookings.");
+            System.out.println("Approver role: " + approver.getRoleType());
+
+            // Check if the user has the admin role
+            if (!"admin".equalsIgnoreCase(approver.getRoleType())) {
+                throw new IllegalStateException("Only admin users can approve bookings.");
+            }
+
+            // Fetch the booking from the database
+            Bookings existingBooking = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+            System.out.println("Previous status: " + existingBooking.getStatus());
+
+            // Update the relevant fields for approval
+            existingBooking.setStatus("awaiting_approval");
+            existingBooking.setApprovedBy(userId);
+            existingBooking.setApprovedOn(LocalDateTime.now());
+            existingBooking.setApprovalRemarks(updatedBooking.getApprovalRemarks());
+
+            System.out.println("New status before save: " + existingBooking.getStatus());
+
+            // Save the updated booking
+            Bookings savedBooking = bookingRepository.save(existingBooking);
+
+            System.out.println("Saved booking status: " + savedBooking.getStatus());
+
+            // Record the approval in the audit log
+            AuditLog auditLog = new AuditLog();
+            auditLog.setBookingId(existingBooking.getBookingId());
+            auditLog.setChangeType("modified");
+            auditLog.setComments("Booking approved by admin user " + userId);
+            auditLog.setTimestamp(LocalDateTime.now());
+            System.out.println("Setting audit log status to: " + existingBooking.getStatus());
+            auditLog.setBookingStatus(existingBooking.getStatus());
+            auditLogRepository.save(auditLog);
+
+        } catch (Exception e) {
+            System.err.println("Error in approveBooking: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
-
-        // Fetch the booking from the database
-        Bookings existingBooking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
-
-        // Update the relevant fields for approval
-        existingBooking.setStatus("approved");
-        existingBooking.setApprovedBy(userId);
-        existingBooking.setApprovedOn(LocalDateTime.now());
-        existingBooking.setApprovalRemarks(updatedBooking.getApprovalRemarks());
-
-        // Save the updated booking
-        bookingRepository.save(existingBooking);
-
-        // Record the approval in the audit log
-        AuditLog auditLog = new AuditLog();
-        auditLog.setBookingId(existingBooking.getBookingId());
-        auditLog.setChangeType("approved");
-        auditLog.setComments("Booking approved by admin user " + userId);
-        auditLog.setTimestamp(LocalDateTime.now());
-        auditLogRepository.save(auditLog);
     }
-
-    /**
-     * Get booking history.
-     * This method retrieves all audit log entries for a particular booking.
-     */
     public List<AuditLog> getBookingHistory(Integer bookingId) {
         return auditLogRepository.findByBookingId(bookingId);
     }
 }
+
